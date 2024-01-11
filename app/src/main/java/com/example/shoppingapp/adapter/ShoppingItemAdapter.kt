@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppingapp.MainActivity
 import com.example.shoppingapp.R
 import com.example.shoppingapp.data.ShoppingItem
+import com.example.shoppingapp.view_model.ShoppingViewModel
 
 class ShoppingItemAdapter(
-    val items:List<ShoppingItem>
+    var items:List<ShoppingItem>,
+    val viewModel:ShoppingViewModel
 ):RecyclerView.Adapter<ShoppingItemAdapter.ShoppingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingViewHolder {
@@ -28,24 +30,26 @@ class ShoppingItemAdapter(
         holder.itemView.findViewById<TextView>(R.id.tvAmount).text = curShoppingItem.itemAmount.toString()
 
         holder.itemView.findViewById<ImageView>(R.id.ivAdd).setOnClickListener {
-            return@setOnClickListener
+            curShoppingItem.itemAmount++
+            viewModel.upsert(curShoppingItem)
         }
 
         holder.itemView.findViewById<ImageView>(R.id.ivMinus).setOnClickListener {
-            return@setOnClickListener
+            if(curShoppingItem.itemAmount>0){
+                curShoppingItem.itemAmount--
+                viewModel.upsert(curShoppingItem)
+            }
         }
 
         holder.itemView.findViewById<ImageView>(R.id.ivDelete).setOnClickListener {
-            return@setOnClickListener
+            viewModel.delete(curShoppingItem)
         }
     }
-
 
     override fun getItemCount(): Int {
         return items.size
     }
 
     inner class ShoppingViewHolder (itemView:View):RecyclerView.ViewHolder(itemView)
-
 
 }
